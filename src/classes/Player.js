@@ -7,6 +7,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+        //Colision con mundo
+        this.setCollideWorldBounds(true);
+        this.body.onWorldBounds=true;
+
         this.cursor = this.scene.input.keyboard.createCursorKeys();
     }
 

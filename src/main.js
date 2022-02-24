@@ -17,7 +17,7 @@ const config = {
 	},
 	scene: [World1],
 	scale: {
-		zoom: 4
+		zoom: 5
 	}
 }
 
