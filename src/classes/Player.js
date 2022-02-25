@@ -8,6 +8,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.scene.physics.add.existing(this);
 
         this.setSize(8, 7, true);
+        this.velocity = 50;
+        this.jumpForce = 100;
 
         //Colision con mundo
         this.setCollideWorldBounds(true);
@@ -19,14 +21,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
     update(time, delta){
         if(this.cursor.left.isDown)
         {
-            this.setVelocityX(-50);
+            this.setVelocityX(-this.velocity);
             
-            this.setFlipX(false); 
+            this.setFlipX(true); 
         }
         else if(this.cursor.right.isDown)
         {
-            this.setVelocityX(50);
-            this.setFlipX(true); 
+            this.setVelocityX(this.velocity);
+            this.setFlipX(false); 
         }
         else
         {
@@ -41,7 +43,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
 
         if (this.cursor.space.isDown && this.body.onFloor()) {
             
-            this.setVelocityY(-100);
+            this.setVelocityY(-this.jumpForce);
             this.jump = true;
         }
 

@@ -6,8 +6,8 @@ export default class World1 extends Phaser.Scene
     constructor()
 	{
 		super('world1')
-        this.spawnX = 50;
-        this.spawnY = 20;
+        this.spawnX = 54;
+        this.spawnY = 128;
         this.offsetX = -global.pixels;
         this.offsetY = global.pixels;
 	}
@@ -21,7 +21,8 @@ export default class World1 extends Phaser.Scene
     }
 
     create(){
-        this.physics.world.setBounds(0,0, this.sys.game.canvas.width, this.sys.game.canvas.height*1.2);
+        this.physics.world.TILE_BIAS = 8;
+        this.physics.world.setBounds(0,0, this.sys.game.canvas.width, this.sys.game.canvas.height+global.pixels);
 
         var bg = this.add.image(this.sys.game.canvas.width*0.5, this.sys.game.canvas.height*0.5, 'bg');
         //El fondo sigue a la camara
