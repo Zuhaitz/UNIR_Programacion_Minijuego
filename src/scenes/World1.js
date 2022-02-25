@@ -8,8 +8,8 @@ export default class World1 extends Phaser.Scene
 		super('world1')
         this.spawnX = 50;
         this.spawnY = 20;
-        this.offsetX = -8;
-        this.offsetY = 8;
+        this.offsetX = -global.pixels;
+        this.offsetY = global.pixels;
 	}
 
     preload()
