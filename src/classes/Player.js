@@ -1,14 +1,11 @@
-export default class Player extends Phaser.Physics.Arcade.Sprite
+import Character from "./Character";
+
+export default class Player extends Character
 {
     constructor(scene,x,y, spriteName)
     {
         super(scene, x, y, spriteName);
-        this.scene = scene;
-        this.scene.add.existing(this);
-        this.scene.physics.add.existing(this);
 
-        this.setSize(8, 7, true);
-        this.velocity = 50;
         this.jumpForce = 100;
 
         //Colision con mundo
