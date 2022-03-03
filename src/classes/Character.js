@@ -1,11 +1,10 @@
-export default class Character extends Phaser.Physics.Arcade.Sprite
+import Entity from "./Entity";
+
+export default class Character extends Entity
 {
     constructor(scene, x, y, spriteName, traps)
     {
         super(scene,x,y, spriteName);
-        this.scene = scene;
-        this.scene.add.existing(this);
-        this.scene.physics.add.existing(this);
 
         this.traps = traps;
 
@@ -15,7 +14,6 @@ export default class Character extends Phaser.Physics.Arcade.Sprite
 
         this.fallen = this.scene.sys.game.canvas.height+global.pixels*3;
 
-        this.setSize(8, 7);
         this.velocity = 50;
 
         this.dead = false;
@@ -39,6 +37,7 @@ export default class Character extends Phaser.Physics.Arcade.Sprite
     {
         if(!this.dead){
             this.dead = true;
+            this.setVelocityX(0);
             console.log(this.type +" dead");
         }
     }

@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import Crystal from '../classes/Crystal';
 import Enemy from '../classes/Enemy';
 import Player from '../classes/Player';
 
@@ -17,14 +18,15 @@ export default class World1 extends Phaser.Scene
     {
         this.load.tilemapTiledJSON('map', '8bitMap1.json');
         this.load.image('tiles', '8bitStyle_Atlas.png');
-        this.load.image('player', '8bitStyle_Player.png');
-        this.load.image('enemy1', 'Enemy1.png');
+        this.load.image('player', 'Assets/Player1.png');
+        this.load.image('enemy1', 'Assets/Enemy1.png');
+        this.load.image('crystal', 'Assets/Crystal.png');
         this.load.image('bg', '8bitStyle_Background.png');
     }
 
     create(){
-        this.physics.world.TILE_BIAS = 8;
-        this.physics.world.setBounds(0,0, this.sys.game.canvas.width, this.sys.game.canvas.height*2);
+        
+        
 
         var bg = this.add.image(this.sys.game.canvas.width*0.5, this.sys.game.canvas.height*0.5, 'bg');
         //El fondo sigue a la camara
@@ -35,7 +37,10 @@ export default class World1 extends Phaser.Scene
         const suelo = map.createLayer('ground', tiles, this.offsetX, this.offsetY);
         const traps = map.createLayer('traps', tiles, this.offsetX, this.offsetY);
 
-        this.player = new Player(this, this.spawnX, this.spawnY, 'player', traps);
+        this.physics.world.TILE_BIAS = 8;
+        this.physics.world.setBounds(0,0, map.widthInPixels, map.heightInPixels*2);
+
+        this.player = new Player(this, this.spawnX, this.spawnY, 'player', 3, traps);
         this.physics.add.collider(this.player,suelo);
 
         suelo.setCollisionByExclusion(-1, true);
@@ -49,6 +54,7 @@ export default class World1 extends Phaser.Scene
 
         //Crear enemigos
         this.createEnemies(map, suelo, traps);
+        this.createCrystals(map);
     }
 
     update (time, delta)
@@ -60,23 +66,46 @@ export default class World1 extends Phaser.Scene
         }
     }
 
+    createCrystals(map)
+    {
+        var crystalsArr = map.getObjectLayer('crystals')['objects'];
+        var crystalsGroup = this.physics.add.group({
+            allowGravity: false,
+            immovable : true
+        });
+
+        for (let index = 0; index < crystalsArr.length; index++) {
+            const element = crystalsArr[index];
+            var posX = element.x+this.offsetX/2;
+            var posY = element.y+this.offsetY/2;
+            var crystal = new Crystal(this, posX, posY, 'crystal');
+            crystalsGroup.add(crystal);
+        }
+    }
+
     createEnemies(map, suelo, traps)
     {
+        var enemiesGroup = this.physics.add.group({
+            collideWorldBounds: true
+        });
+
         var enemiesArr = map.getObjectLayer('enemies')['objects'];
         this.enemies = [];
         
         for (let index = 0; index < enemiesArr.length; index++) {
             const element = enemiesArr[index];
-            //if (element.gid == 74){
-                var enemy = new Enemy(this, element.x-this.offsetX, element.y+this.offsetY, 'enemy1', traps, this.player, element.properties[0].value);
+            if (element.gid == 74){
+                var posX = element.x+this.offsetX/2;
+                var posY = element.y+this.offsetY/2;
+                var areaL = element.properties[0].value;
+                var areaR = element.properties[1].value;
+                var enemy = new Enemy(this, posX, posY, 'enemy1', traps, this.player, 1, areaL, areaR);
                 this.enemies.push(enemy);
-                this.physics.add.collider(enemy, suelo);
-            //}
+                enemiesGroup.add(enemy);
+            }
         }
-    }
 
-    debug()
-    {
-        console.log("works");
+        this.physics.add.collider(enemiesGroup, suelo);
+        this.physics.add.collider(enemiesGroup, enemiesGroup);
     }
 }

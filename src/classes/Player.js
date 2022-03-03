@@ -1,12 +1,17 @@
+import { Time } from "phaser";
 import Character from "./Character";
 
 export default class Player extends Character
 {
-    constructor(scene,x,y, spriteName, traps)
+    constructor(scene,x,y, spriteName, health, traps)
     {
         super(scene, x, y, spriteName, traps);
 
+        this.health = health;
         this.jumpForce = 100;
+
+        this.invD = 2;
+        this.invincible = false;
 
         this.cursor = this.scene.input.keyboard.createCursorKeys();
     }
@@ -37,8 +42,8 @@ export default class Player extends Character
             this.jump = false;
         }
 
-        if (this.cursor.space.isDown && this.body.onFloor()) {
-            
+        if (this.cursor.space.isDown && this.body.onFloor()) 
+        {    
             this.setVelocityY(-this.jumpForce);
             this.jump = true;
         }
@@ -50,5 +55,34 @@ export default class Player extends Character
             this.play('walk', true);
         else
             this.play('idle', true);*/
+    }
+
+    damage(dmg)
+    {
+        if(this.invincible) return;
+
+        this.health = this.health - dmg;
+       
+        if(this.health <= 0){
+            this.health = 0;
+            this.die();
+        }else{
+            this.alpha = 0.5;
+            this.invincible = true;
+
+            this.scene.time.addEvent({
+                delay: this.invD*1000,
+                callback: function(){ 
+                    this.alpha = 1;
+                    this.invincible = false;
+                },
+                callbackScope: this,
+            });
+        }
+    }
+
+    bounce(){
+        this.setVelocityY(-this.jumpForce/2);
+        this.jump = true;
     }
 }
