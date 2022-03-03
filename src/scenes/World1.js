@@ -24,7 +24,7 @@ export default class World1 extends Phaser.Scene
 
     create(){
         this.physics.world.TILE_BIAS = 8;
-        this.physics.world.setBounds(0,0, this.sys.game.canvas.width, this.sys.game.canvas.height+global.pixels);
+        this.physics.world.setBounds(0,0, this.sys.game.canvas.width, this.sys.game.canvas.height*2);
 
         var bg = this.add.image(this.sys.game.canvas.width*0.5, this.sys.game.canvas.height*0.5, 'bg');
         //El fondo sigue a la camara
@@ -32,10 +32,10 @@ export default class World1 extends Phaser.Scene
 
         var map = this.make.tilemap({key: 'map'});
         var tiles = map.addTilesetImage('8bitStyle_Atlas', 'tiles');
-        var suelo = map.createLayer('ground', tiles, this.offsetX, this.offsetY);
-        var traps = map.createLayer('traps', tiles, this.offsetX, this.offsetY);
+        const suelo = map.createLayer('ground', tiles, this.offsetX, this.offsetY);
+        const traps = map.createLayer('traps', tiles, this.offsetX, this.offsetY);
 
-        this.player = new Player(this, this.spawnX, this.spawnY, 'player');
+        this.player = new Player(this, this.spawnX, this.spawnY, 'player', traps);
         this.physics.add.collider(this.player,suelo);
 
         suelo.setCollisionByExclusion(-1, true);
@@ -47,7 +47,8 @@ export default class World1 extends Phaser.Scene
         //Para evitar parpadeo de las tiles
         this.cameras.main.roundPixels = true;
 
-        this.createEnemies(map, suelo);
+        //Crear enemigos
+        this.createEnemies(map, suelo, traps);
     }
 
     update (time, delta)
@@ -59,18 +60,23 @@ export default class World1 extends Phaser.Scene
         }
     }
 
-    createEnemies(map, suelo)
+    createEnemies(map, suelo, traps)
     {
         var enemiesArr = map.getObjectLayer('enemies')['objects'];
         this.enemies = [];
+        
         for (let index = 0; index < enemiesArr.length; index++) {
             const element = enemiesArr[index];
-
-            if (element.gid == 10){
-                var enemy = new Enemy(this, element.x+global.pixels, element.y-global.pixels, 'enemy1', this.player, element.properties[0].value);
+            //if (element.gid == 74){
+                var enemy = new Enemy(this, element.x-this.offsetX, element.y+this.offsetY, 'enemy1', traps, this.player, element.properties[0].value);
                 this.enemies.push(enemy);
                 this.physics.add.collider(enemy, suelo);
-            }
+            //}
         }
+    }
+
+    debug()
+    {
+        console.log("works");
     }
 }

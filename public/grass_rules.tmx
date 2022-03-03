@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="120" height="23" tilewidth="8" tileheight="8" infinite="0" nextlayerid="5" nextobjectid="1">
- <tileset firstgid="1" source="8bitStyle_Atlas.tsx"/>
- <tileset firstgid="91" source="8bitStyle_Base.tsx"/>
+ <tileset firstgid="1" name="8bitStyle_Atlas" tilewidth="8" tileheight="8" tilecount="90" columns="9">
+  <image source="8bitStyle_Atlas.png" width="72" height="80"/>
+ </tileset>
+ <tileset firstgid="91" name="8bitStyle_Base" tilewidth="8" tileheight="8" tilecount="64" columns="8">
+  <image source="8bitStyle_Base.png" width="64" height="64"/>
+ </tileset>
  <layer id="1" name="regions" width="120" height="23">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

@@ -2,13 +2,13 @@ import Character from "./Character";
 
 export default class Enemy extends Character
 {
-    constructor(scene,x,y, spriteName, player, area=0)
+    constructor(scene,x,y, spriteName, traps, player, area=0)
     {
-        super(scene,x,y, spriteName)
+        super(scene,x,y, spriteName, traps)
         this.player = player;
         this.area = area*global.pixels;
 
-        this.velocity = this.velocity/2;
+        this.velocity = 20;
 
         this.timeCheck = 0;
         this.lastPosX = 0;
@@ -23,41 +23,42 @@ export default class Enemy extends Character
 
     update(time,delta)
     {
+        super.update(time, delta);
+        if(this.dead) 
+        {
+            this.destroy();
+            return;
+        }
+        if(this.body.onFloor() && this.body.velocity.x == 0) this.changeState();
+
         switch(this.state)
         {
             case "left":
-                this.movingLeft(time, delta);
+                this.movingLeft(time);
                 break;
             case "right":
-                this.movingRight(time, delta);
+                this.movingRight(time);
                 break;
         }
-        if(this.body.onFloor() && this.lastPosX == this.x) this.changeState();
-        this.lastPosX = this.x;
     }
 
-    movingLeft(time, delta)
+    movingLeft(time)
     {
         this.setVelocityX(-this.velocity);
-        this.setFlipX(false);
-        let dist = Math.abs(this.nextPositionX - this.x);
-        if(dist < 4)
-        {
-            this.state = "right";
-            this.nextPositionX = this.originX+this.area;
-            this.time = time;
-        }
+        this.checkDistance(time);
     }
 
-    movingRight(time, delta)
+    movingRight(time)
     {
         this.setVelocityX(this.velocity);
-        this.setFlipX(true);
+        this.checkDistance(time);
+    }
+
+    checkDistance(time){
         let dist = Math.abs(this.nextPositionX - this.x);
-        if(dist < 4)
+        if(dist < 4 && this.body.onFloor())
         {
-            this.state = "left";
-            this.nextPositionX = this.originX-this.area;
+            this.changeState();
             this.time = time;
         }
     }
@@ -65,10 +66,12 @@ export default class Enemy extends Character
     changeState(){
         console.log("enter")
         if(this.state == "left") {
+            this.setFlipX(true);
             this.state = "right";
             this.nextPositionX = this.originX+this.area;
         }
         else if(this.state == "right") {
+            this.setFlipX(false);
             this.state = "left";
             this.nextPositionX = this.originX-this.area;
         }

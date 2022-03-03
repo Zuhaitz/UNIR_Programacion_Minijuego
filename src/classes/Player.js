@@ -2,20 +2,19 @@ import Character from "./Character";
 
 export default class Player extends Character
 {
-    constructor(scene,x,y, spriteName)
+    constructor(scene,x,y, spriteName, traps)
     {
-        super(scene, x, y, spriteName);
+        super(scene, x, y, spriteName, traps);
 
         this.jumpForce = 100;
-
-        //Colision con mundo
-        this.setCollideWorldBounds(true);
-        this.body.onWorldBounds=true;
 
         this.cursor = this.scene.input.keyboard.createCursorKeys();
     }
 
     update(time, delta){
+        super.update(time, delta);
+        if(this.dead) return;
+
         if(this.cursor.left.isDown)
         {
             this.setVelocityX(-this.velocity);
