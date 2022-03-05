@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
-
 import World1 from './scenes/World1'
+import GameOver from './scenes/GameOver'
 
 var window = {width:320, height:180}
 global.pixels = 8
@@ -15,10 +15,10 @@ const config = {
 		default: 'arcade',
 		arcade: {
 			gravity: { y: 200 },
-			//debug: true
+			debug: true
 		}
 	},
-	scene: [World1],
+	scene: [World1, GameOver],
 	scale: {
 		zoom: 5
 	}

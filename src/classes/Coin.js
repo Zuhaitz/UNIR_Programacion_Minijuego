@@ -1,6 +1,6 @@
 import Collectable from "./Collectable";
 
-export default class Crystal extends Collectable
+export default class Coin extends Collectable
 {
     constructor(scene, x, y, spriteName, player)
     {
@@ -9,7 +9,7 @@ export default class Crystal extends Collectable
 
     spriteHit()
     {
-        this.scene.crystalPicked(); 
+        this.scene.coinPicked();
         super.spriteHit();
     }
 }
