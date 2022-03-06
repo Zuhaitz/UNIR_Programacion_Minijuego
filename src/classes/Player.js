@@ -7,6 +7,7 @@ export default class Player extends Character
     {
         super(scene, x, y, spriteName, traps);
 
+        this.maxHealth = health;
         this.health = health;
         this.jumpForce = 100;
 
@@ -14,6 +15,11 @@ export default class Player extends Character
         this.invincible = false;
 
         this.cursor = this.scene.input.keyboard.createCursorKeys();
+
+        this.shoot = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+        this.lastShoot;
+        this.allowedToShoot = true;
+        this.shootSpeed = 0.5;
     }
 
     update(time, delta){
@@ -23,7 +29,6 @@ export default class Player extends Character
         if(this.cursor.left.isDown)
         {
             this.setVelocityX(-this.velocity);
-            
             this.setFlipX(true); 
         }
         else if(this.cursor.right.isDown)
@@ -46,6 +51,20 @@ export default class Player extends Character
         {    
             this.setVelocityY(-this.jumpForce);
             this.jump = true;
+        }
+
+
+        if(!this.shoot.isDown && !this.allowedToShoot && time - this.lastShoot > this.shootSpeed)
+        {
+            this.allowedToShoot = true;
+        }
+        if(this.shoot.isDown && this.allowedToShoot)
+        {
+            var direction = 1;
+            if(this.flipX) direction = -1;
+            this.scene.tossCoin(this.body.x+global.pixels+1, this.body.y+1, direction);
+            this.lastShoot = time;
+            this.allowedToShoot = false;
         }
 
 
@@ -79,6 +98,8 @@ export default class Player extends Character
                 callbackScope: this,
             });
         }
+
+        this.scene.updateHearts(this.health, dmg);
     }
 
     bounce(){

@@ -3,6 +3,7 @@ import Coin from '../classes/Coin';
 import Crystal from '../classes/Crystal';
 import Enemy from '../classes/Enemy';
 import Player from '../classes/Player';
+import Projectile from '../classes/Projectile';
 
 export default class World1 extends Phaser.Scene
 {
@@ -23,14 +24,17 @@ export default class World1 extends Phaser.Scene
         this.load.image('enemy1', 'Assets/Enemy1.png');
         this.load.image('crystal', 'Assets/Crystal.png');
         this.load.image('coin', 'Assets/Coin.png');
+        this.load.image('coinT', 'Assets/Coin_tiny.png');
+        this.load.image('heart', 'Assets/Heart.png');
+        this.load.image('heartE', 'Assets/Heart_Empty.png');
         this.load.image('bg', '8bitStyle_Background.png');
         this.load.bitmapFont('atari', 'Fonts/atari-classic.png', 'Fonts/atari-classic.xml');
     }
 
     create()
     {
+        //Cargar fondo
         var bg = this.add.image(this.sys.game.canvas.width*0.5, this.sys.game.canvas.height*0.5, 'bg');
-        //El fondo sigue a la camara
         bg.setScrollFactor(0);
 
         var map = this.make.tilemap({key: 'map'});
@@ -41,11 +45,14 @@ export default class World1 extends Phaser.Scene
         this.physics.world.TILE_BIAS = 8;
         this.physics.world.setBounds(0,0, map.widthInPixels, map.heightInPixels*2);
 
+        this.hearts = [];
         this.player = new Player(this, this.spawnX, this.spawnY, 'player', 3, traps);
+        this.createHearts(3);
         this.physics.add.collider(this.player,suelo);
-
         suelo.setCollisionByExclusion(-1, true);
         this.physics.add.collider(this.player, suelo);
+
+        this.tossedCoins = []
 
         //Limitar camara
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -72,21 +79,24 @@ export default class World1 extends Phaser.Scene
             const element = this.enemies[index];
             element.update(time, delta);
         }
+
+        for (let index = 0; index < this.tossedCoins.length; index++) {
+            const element = this.tossedCoins[index];
+            element.update(time, delta);
+        }
     }
 
     createUI()
     {
-        var coinsCount  = this.add.image(16, 16, 'coin');
-        coinsCount.setScrollFactor(0,0);
-        coinsCount.fixedToCamera = true;
+        var coinsCount  = this.add.image(64, 16, 'coin');
+        coinsCount.setScrollFactor(0);
         
-        this.coinsCountTxt = this.add.bitmapText(14, 16, 'atari', " x0").setOrigin(0, 0.5);
+        this.coinsCountTxt = this.add.bitmapText(62, 16, 'atari', " x0").setOrigin(0, 0.5);
         this.coinsCountTxt.setFontSize(8);
         this.coinsCountTxt.setScrollFactor(0);
 
         var crystalsCount  = this.add.image(16, 32, 'crystal');
-        crystalsCount.setScrollFactor(0,0);
-        crystalsCount.fixedToCamera = true;
+        crystalsCount.setScrollFactor(0);
         
         this.crystalsCountTxt = this.add.bitmapText(30, 32, 'atari', ` 0/${this.totalCrystals}`).setOrigin(0.5);
         this.crystalsCountTxt.setFontSize(8);
@@ -140,11 +150,11 @@ export default class World1 extends Phaser.Scene
 
     createEnemies(map, suelo, traps)
     {
+        var enemiesArr = map.getObjectLayer('enemies')['objects'];
         var enemiesGroup = this.physics.add.group({
             collideWorldBounds: true
         });
-
-        var enemiesArr = map.getObjectLayer('enemies')['objects'];
+        
         this.enemies = [];
         
         for (let index = 0; index < enemiesArr.length; index++) {
@@ -162,6 +172,46 @@ export default class World1 extends Phaser.Scene
 
         this.physics.add.collider(enemiesGroup, suelo);
         this.physics.add.collider(enemiesGroup, enemiesGroup);
+    }
+
+    createHearts(health)
+    {
+        this.destroyHearts();
+        for(let index = 0; index < health; ++index)
+        {
+            var heart  = this.add.image(16+(global.pixels+1)*index, 16, 'heart');
+            heart.setScrollFactor(0);
+            this.hearts.push(heart);
+        }
+    }
+
+    updateHearts(health, dmg)
+    {
+        for (let index = health; index < health+dmg; index++) {
+            this.hearts[index].destroy();
+            var heartE = this.add.image(16+(global.pixels+1)*index, 16, 'heartE');
+            heartE.setScrollFactor(0);
+            this.hearts.push(heartE);
+        }      
+    }
+
+    destroyHearts()
+    {
+        for (let index = 0; index < this.hearts.length; index++) 
+            this.hearts[index].destroy();
+    
+        this.hearts = [];
+    }
+
+    tossCoin(posX, posY, direction)
+    {
+        if(this.nCoins>0)
+        {
+            var coin = new Projectile(this, posX, posY, 'coinT', this.enemies, direction, 75);
+            this.tossedCoins.push(coin);
+            this.nCoins--;
+            this.coinsCountTxt.text = ` x${this.nCoins}`;
+        }
     }
 
     crystalPicked()
