@@ -6,33 +6,33 @@ export default class Character extends Entity
     {
         super(scene,x,y, spriteName);
 
-        this.traps = traps;
-
-        //Colision con mundo
-        this.setCollideWorldBounds(true);
-        this.body.onWorldBounds=true;
-
+        this.setCollideWorldBounds(true); //Colision con mundo
+        this.traps = traps; //Layer de trampas para detectar la colision
         this.fallen = this.scene.sys.game.canvas.height+global.pixels*3;
-
         this.velocity = 50;
-
         this.dead = false;
     }
 
     update(time,delta)
     {
+        //Comprueba que el personaje no se cayo al vacio o en una trampa 
         if(this.y >= this.fallen) this.die();
         this.checkTraps();
     }
 
+    /**
+     * Se detecta si hay una tramapa en la posicion del personaje
+     */
     checkTraps()
     {
         var tile = this.traps.getTileAtWorldXY(this.x, this.y);
-        if (tile) {
+        if (tile)
             this.die();
-        }
     }
     
+    /**
+     * Mata al personaje y lo detiene
+     */
     die()
     {
         if(!this.dead){
@@ -41,6 +41,4 @@ export default class Character extends Entity
             console.log(this.type +" dead");
         }
     }
-
-
 }
