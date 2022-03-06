@@ -8,6 +8,9 @@ export default class Collectable extends Entity
         this.scene.physics.add.overlap(this, player, this.spriteHit, null, this);
     }
 
+    /**
+     * Llamada cuando se colisiona con el jugador
+     */
     spriteHit()
     {
         this.destroy();  

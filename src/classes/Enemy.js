@@ -4,16 +4,17 @@ export default class Enemy extends Character
 {
     constructor(scene,x,y, spriteName, traps, player, attack, areaL=0, areaR=0)
     {
-        super(scene,x,y, spriteName, traps)
+        super(scene,x,y, spriteName, traps);
+        //Referencia al jugador
         this.player = player;
-        this.areaL = areaL*global.pixels;
-        this.areaR = areaR*global.pixels;
 
+        //Estadisticas
         this.velocity = 20;
         this.attack = attack;
 
-        this.timeCheck = 0;
-        this.lastPosX = 0;
+        //Area de desplazamiento
+        this.areaL = areaL*global.pixels;
+        this.areaR = areaR*global.pixels;
         this.originX = this.x;
 
         if(this.areaL > 0 || areaR > 0)
@@ -22,51 +23,58 @@ export default class Enemy extends Character
             this.state = "left";
         }
 
+        //Colision con el jugador
         this.scene.physics.add.overlap(this, player, this.spriteHit, null, this);
     }
 
     update(time,delta)
     {
         super.update(time, delta);
+
+        //Comprueba la muerte
         if(this.dead) 
         {
             this.destroy();
             return;
         }
+
+        //Si no se mueve, que se de la vuelta
         if(this.body.onFloor() && this.body.velocity.x == 0) this.changeState();
 
+        //Control de estado
         switch(this.state)
         {
             case "left":
-                this.movingLeft(time);
+                this.moving(-1);
                 break;
             case "right":
-                this.movingRight(time);
+                this.moving(1);
                 break;
         }
     }
 
-    movingLeft(time)
+    /**
+     * Mueve al enemigo hasta la posicion designada
+     */
+    moving(direction)
     {
-        this.setVelocityX(-this.velocity);
-        this.checkDistance(time);
+        this.setVelocityX(this.velocity*direction);
+        this.checkDistance();
     }
 
-    movingRight(time)
-    {
-        this.setVelocityX(this.velocity);
-        this.checkDistance(time);
-    }
-
-    checkDistance(time){
+    /**
+     * Comprueba si se llego al punto de destino
+     */
+    checkDistance(){
         let dist = Math.abs(this.nextPositionX - this.x);
         if(dist < 4 && this.body.onFloor())
-        {
             this.changeState();
-            this.time = time;
-        }
     }
 
+    /**
+     * Cambia el estado del enemigo a la direccion contraria
+     * Actualiza su nueva posicion destino
+     */
     changeState(){
         if(this.state == "left") {
             this.setFlipX(true);
@@ -80,11 +88,16 @@ export default class Enemy extends Character
         }
     }
 
+    /**
+     * Comprueba la colision con el jugador
+     */
     spriteHit()
     {
         var dist =  this.y - this.player.y;
-        if(dist>global.pixels-2 && this.player.body.velocity.y > 0) 
+        //Si el jugador esta por encima
+        if(dist>global.pixels-2 /*&& this.player.body.velocity.y > 0*/) //El requerimiento de caida no se si hace falta, necesita testeo
         {
+            //Muere y dice al jugador que se impulse
             this.die();
             this.player.bounce();
         }

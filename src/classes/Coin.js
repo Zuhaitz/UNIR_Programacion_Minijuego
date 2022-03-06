@@ -7,6 +7,9 @@ export default class Coin extends Collectable
         super(scene, x,y, spriteName, player);
     }
 
+    /**
+     * Llamada cuando se colisiona con el jugador
+     */
     spriteHit()
     {
         this.scene.coinPicked();

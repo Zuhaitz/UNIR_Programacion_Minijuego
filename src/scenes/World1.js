@@ -28,6 +28,9 @@ export default class World1 extends Phaser.Scene
         this.load.image('heart', 'Assets/Heart.png');
         this.load.image('heartE', 'Assets/Heart_Empty.png');
         this.load.image('bg', '8bitStyle_Background.png');
+
+        //Fuente para que no no se vea pixelado el texto
+        //Fuente: https://github.com/photonstorm/phaser3-examples/tree/master/public/assets/fonts/bitmap
         this.load.bitmapFont('atari', 'Fonts/atari-classic.png', 'Fonts/atari-classic.xml');
     }
 
