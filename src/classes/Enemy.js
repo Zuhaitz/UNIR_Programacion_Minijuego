@@ -25,6 +25,9 @@ export default class Enemy extends Character
 
         //Colision con el jugador
         this.scene.physics.add.overlap(this, player, this.spriteHit, null, this);
+
+        //Efectos de sonido
+        this.defeatEffect = this.scene.sound.add("enemyDefeat", { loop: false , volume: 0.05 });
     }
 
     update(time,delta)
@@ -102,5 +105,14 @@ export default class Enemy extends Character
             this.player.bounce();
         }
         else this.player.damage(this.attack);
+    }
+
+    /**
+     * Mata al personaje y lo detiene
+     */
+    die()
+    {
+        if(!this.dead) this.defeatEffect.play(); //Efecto de muerte
+        super.die();
     }
 }

@@ -29,6 +29,15 @@ export default class World1 extends Phaser.Scene
         this.load.image('heartE', 'Assets/Heart_Empty.png');
         this.load.image('bg', '8bitStyle_Background.png');
 
+        //Animaciones
+        this.load.atlas('sprites_jugador','Anim/Player_Anim.png', 'Anim/Player_Anim.json');
+
+        //Efectos de sonido
+        this.load.audio('jump', 'SoundEffects/422087__prof-mudkip__8-bit-jump.wav');
+        this.load.audio('enemyDefeat', 'SoundEffects/506585__mrthenoronha__kill-enemy-4-8-bit.wav');
+        this.load.audio('coin', 'SoundEffects/350869__cabled-mess__coin-c-06.wav');
+        this.load.audio('damage', 'SoundEffects/457195__antikore__8-bit-damage.wav');
+
         //Fuente para que no no se vea pixelado el texto
         //Fuente: https://github.com/photonstorm/phaser3-examples/tree/master/public/assets/fonts/bitmap
         this.load.bitmapFont('atari', 'Fonts/atari-classic.png', 'Fonts/atari-classic.xml');

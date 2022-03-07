@@ -5,6 +5,8 @@ export default class Coin extends Collectable
     constructor(scene, x, y, spriteName, player)
     {
         super(scene, x,y, spriteName, player);
+
+        this.coinEffect = this.scene.sound.add("coin", { loop: false , volume: 0.05 });
     }
 
     /**
@@ -13,6 +15,7 @@ export default class Coin extends Collectable
     spriteHit()
     {
         this.scene.coinPicked();
+        this.coinEffect.play();
         super.spriteHit();
     }
 }

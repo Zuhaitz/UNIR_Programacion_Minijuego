@@ -18,6 +18,10 @@ export default class GameOver extends Phaser.Scene
         //Fuente para que no no se vea pixelado el texto
         //Fuente: https://github.com/photonstorm/phaser3-examples/tree/master/public/assets/fonts/bitmap
         this.load.bitmapFont('atari', 'Fonts/atari-classic.png', 'Fonts/atari-classic.xml');
+
+        //Efectos de sonido
+        this.load.audio('win', 'SoundEffects/535840__evretro__8-bit-mini-win-sound-effect.wav');
+        this.load.audio('lose', 'SoundEffects/350984__cabled-mess__lose-c-03.wav');
     }
 
     create ()
@@ -39,6 +43,9 @@ export default class GameOver extends Phaser.Scene
                 gameOverTxt.setFontSize(10);
                 gameOverTxt.setTint(0xffcd75);
                 gameOverTxt.setScrollFactor(0);
+
+                //Efecto de victoria
+                this.sound.add("win", { loop: false , volume: 0.4 }).play();
                 break;
 
             case "loss": //En caso de derrota ponemos el texto
@@ -46,6 +53,9 @@ export default class GameOver extends Phaser.Scene
                 gameOverTxt.setFontSize(25);
                 gameOverTxt.setTint(0xb13e53);
                 gameOverTxt.setScrollFactor(0);
+
+                //Efecto de derrota
+                this.sound.add("lose", { loop: false , volume: 0.4 }).play();
                 break;
 
             default:

@@ -7,6 +7,9 @@ export default class Player extends Character
     {
         super(scene, x, y, spriteName, traps);
 
+        this.setSize(6, 8);
+        this.setOffset(2 ,0);
+
         //estadisticas
         this.maxHealth = health;
         this.health = health;
@@ -24,6 +27,31 @@ export default class Player extends Character
         this.lastShoot;
         this.allowedToShoot = true;
         this.shootSpeed = 0.5;
+
+        //Animaciones
+        this.anims.create({
+            key: 'walk',
+            frames: this.scene.anims.generateFrameNames('sprites_jugador', { start: 0, end: 4, prefix: 'Walk_' }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'idle',
+            frames: this.scene.anims.generateFrameNames('sprites_jugador', { start: 0, end: 0, prefix: 'Idle_' }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jump',
+            frames: this.scene.anims.generateFrameNames('sprites_jugador', { start: 0, end: 0, prefix: 'Jump_' }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        //Efectos de sonido
+        this.jumpEffect = this.scene.sound.add("jump", { loop: false , volume: 0.05 });
+        this.damageEffect = this.scene.sound.add("damage", { loop: false , volume: 0.05 });
     }
 
     update(time, delta){
@@ -32,22 +60,16 @@ export default class Player extends Character
         if(this.dead) return;
 
         //Ejecuta el movimiento
-        this.controlarMovimiento();
-        this.controlarSalto();
-        this.controlarDisparo(time);
-
-        /*if(this.jump)
-            this.play('jump', true);
-        else if(this.body.velocity.x != 0)
-            this.play('walk', true);
-        else
-            this.play('idle', true);*/
+        this.moveControl();
+        this.jumpControl();
+        this.shootControl(time);
+        this.animControl();
     }
 
     /**
      * Mueve al personaje segun el input del jugador
      */
-    controlarMovimiento()
+    moveControl()
     {
         if(this.cursor.left.isDown)
         {
@@ -67,7 +89,7 @@ export default class Player extends Character
     /**
      * Hace saltar al personaje segun el input del jugador y el estado
      */
-    controlarSalto()
+    jumpControl()
     {
         if(this.jump && this.body.onFloor())
             this.jump = false;
@@ -76,6 +98,7 @@ export default class Player extends Character
         {    
             this.setVelocityY(-this.jumpForce);
             this.jump = true;
+            this.jumpEffect.play(); //Efecto de salto
         }
     }
 
@@ -83,7 +106,7 @@ export default class Player extends Character
      * Controla si el jugador puede o no disparar
      * @param {integer} time 
      */
-    controlarDisparo(time)
+    shootControl(time)
     {
         if(!this.shoot.isDown && !this.allowedToShoot && time - this.lastShoot > this.shootSpeed)
             this.allowedToShoot = true;
@@ -101,6 +124,19 @@ export default class Player extends Character
     }
 
     /**
+     * Controla las animaciones que se deben lanzar
+     */
+    animControl()
+    {
+        if(this.jump)
+            this.play('jump', true);
+        else if(this.body.velocity.x != 0)
+            this.play('walk', true);
+        else
+            this.play('idle', true);
+    }
+
+    /**
      * Provoca daño al jugador y provoca que sea invencible durante un tiempo
      * @param {integer} dmg - el daño a causar al jugador
      * @returns - Si el jugador es invenciible
@@ -110,6 +146,7 @@ export default class Player extends Character
         if(this.invincible) return; 
 
         this.health = this.health - dmg;
+        this.damageEffect.play(); //Efecto de daño
        
         //Comprueba si murio
         if(this.health <= 0){
