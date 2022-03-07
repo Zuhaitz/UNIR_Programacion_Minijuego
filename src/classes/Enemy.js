@@ -28,6 +28,20 @@ export default class Enemy extends Character
 
         //Efectos de sonido
         this.defeatEffect = this.scene.sound.add("enemyDefeat", { loop: false , volume: 0.05 });
+
+        //Particulas de muerte
+        this.emitter0 = this.scene.add.particles('coin').createEmitter({
+            x: this.x,
+            y: this.y,
+            speed: { min: -50, max: 50 },
+            angle: { min: 0, max: 360 },
+            scale: { start: 1, end: 0 },
+            blendMode: 'SCREEN',
+            //active: false,
+            lifespan: 200,
+            gravityY: 0,
+            on:false
+        });
     }
 
     update(time,delta)
@@ -112,7 +126,21 @@ export default class Enemy extends Character
      */
     die()
     {
-        if(!this.dead) this.defeatEffect.play(); //Efecto de muerte
+        if(!this.dead) 
+        {
+            //Efecto de muerte
+            this.defeatEffect.play();
+            this.deathParticles();
+        } 
         super.die();
+    }
+
+    /**
+     * Invoca las particulas
+     */
+    deathParticles(){
+        this.emitter0.setPosition(this.x, this.y);
+        this.emitter0.explode(10);
+
     }
 }
