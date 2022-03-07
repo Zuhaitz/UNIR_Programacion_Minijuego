@@ -19,6 +19,23 @@
 
 - El/la jugador/a pierde al acabarse las vidas.
 
+## References
+- Fuente Atari: https://github.com/photonstorm/phaser3-examples
+
+- Efectos de sonido: 
+
+	- Salto: https://freesound.org/people/Prof.Mudkip/sounds/422087/
+	
+	- Muerte: https://freesound.org/people/Mrthenoronha/sounds/506585/
+	
+	- Moneda: https://freesound.org/people/cabled_mess/sounds/350869/
+	
+	- Daño: https://freesound.org/people/Antikore/sounds/457195/
+	
+	- Victoria: https://freesound.org/people/EVRetro/sounds/535840/
+	
+	- Derrota: https://freesound.org/people/cabled_mess/sounds/350984/
+
 
 ## License
 
